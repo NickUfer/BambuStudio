@@ -28,7 +28,7 @@ struct SupportParameters {
 	        (object_config.support_filament.value == 0 || ! print_config.filament_soluble.get_at(object_config.support_filament.value - 1));
 
 	    {
-	        this->num_top_interface_layers    = std::max(0, object_config.support_interface_top_layers.value);
+	        this->num_top_interface_layers    = std::min(2, std::max(0, object_config.support_interface_top_layers.value));
 	        this->num_bottom_interface_layers = object_config.support_interface_bottom_layers < 0 ?
 	            num_top_interface_layers : object_config.support_interface_bottom_layers;
 	        this->has_top_contacts              = num_top_interface_layers    > 0;
@@ -44,7 +44,7 @@ struct SupportParameters {
                     // support_filament==0
                     bool differnt_support_interface_filament = object_config.support_interface_filament != 0 &&
                                                                object_config.support_interface_filament != object_config.support_filament;
-                    this->num_top_base_interface_layers    = differnt_support_interface_filament ? 1 : 0;
+                    this->num_top_base_interface_layers    = differnt_support_interface_filament ? std::max(int(object_config.support_interface_top_layers.value) - 1, 1) : 0;
                     this->num_bottom_base_interface_layers = differnt_support_interface_filament ? 1 : 0;
                 }
             } else {
@@ -58,7 +58,7 @@ struct SupportParameters {
                     // support_filament==0
                     bool differnt_support_interface_filament = object_config.support_interface_filament != 0 &&
                                                                object_config.support_interface_filament != object_config.support_filament;
-                    this->num_top_base_interface_layers    = num_top_interface_layers > 0 ? differnt_support_interface_filament ? 2 : 1 : 0;
+                    this->num_top_base_interface_layers    = num_top_interface_layers > 0 ? differnt_support_interface_filament ? std::max(int(object_config.support_interface_top_layers.value) - 1, 1) : 1 : 0;
                     this->num_bottom_base_interface_layers = differnt_support_interface_filament ? 1 : 0;
                 }
             }

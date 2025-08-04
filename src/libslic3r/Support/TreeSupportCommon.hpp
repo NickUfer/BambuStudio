@@ -703,12 +703,22 @@ public:
         assert(support_parameters.has_top_contacts);
         assert(dtt_roof <= support_parameters.num_top_interface_layers);
         SupportGeneratorLayersPtr &layers =
-            dtt_roof == 0 ? this->top_contacts :
-            dtt_roof <= support_parameters.num_top_interface_layers_only() ? this->top_interfaces : this->top_base_interfaces;
+			dtt_roof == 0 ? this->top_contacts :
+            dtt_roof == 1 ? this->top_interfaces :
+             this->top_base_interfaces;
+
         SupportGeneratorLayer*& l = layers[insert_layer_idx];
-        if (l == nullptr)
-            l = &layer_allocate_unguarded(layer_storage, dtt_roof == 0 ? SupporLayerType::sltTopContact : SupporLayerType::sltTopInterface, 
+        if (l == nullptr) {
+			auto supportLayerType = SupporLayerType::sltRaftBase;
+			if (dtt_roof == 0) {
+				supportLayerType = SupporLayerType::sltTopContact;
+			} else if (dtt_roof == 1) {
+				supportLayerType = SupporLayerType::sltTopInterface;
+			}
+
+            l = &layer_allocate_unguarded(layer_storage, supportLayerType,
                     slicing_parameters, config, insert_layer_idx);
+		}
         // will be unioned in finalize_interface_and_support_areas()
         append(l->polygons, std::move(new_roofs));
     }

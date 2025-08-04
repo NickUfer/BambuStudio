@@ -1458,7 +1458,7 @@ SupportGeneratorLayersPtr generate_support_layers(
                     }
             }
             object.add_support_layer(layer_id ++, this_layer_id_interface, height_min, zavg);
-            if (num_interfaces && ! this_layer_contacts_only)
+            //if (num_interfaces && ! this_layer_contacts_only)
                 ++ layer_id_interface;
         }
         i = j;
@@ -1729,9 +1729,7 @@ void generate_support_toolpaths(
                          interface_as_base ? &support_params.support_material_flow : &support_params.support_material_interface_flow)
                             ->with_height(float(layer_ex.layer->height));
                     // If zero interface layers are configured, use the same angle as for the base layers.
-                    filler->angle  = interface_as_base ? angles[support_layer_id % angles.size()] :
-                                     raft_contact      ? support_params.raft_interface_angle(support_layer.interface_id()) :
-                                                         interface_angles[support_layer_id % interface_angles.size()]; // Use interface angle for the interface layers.
+                    filler->angle  = support_params.raft_interface_angle(support_layer.interface_id());
                     double density = raft_contact ? support_params.raft_interface_density : interface_as_base ? support_params.support_density : support_params.interface_density;
                     filler->spacing = raft_contact ? support_params.raft_interface_flow.spacing() :
                         interface_as_base ? support_params.support_material_flow.spacing() : support_params.support_material_interface_flow.spacing();
@@ -1760,8 +1758,7 @@ void generate_support_toolpaths(
                 // the bridging flow does not quite apply. Reduce the flow to area of an ellipse? (A = pi * a * b)
                 assert(! base_interface_layer.layer->bridging);
                 Flow interface_flow = support_params.support_material_flow.with_height(float(base_interface_layer.layer->height));
-                filler->angle           = base_interface_layer.layer->up ? interface_angles[(support_layer_id + 1) % interface_angles.size()] + M_PI_2 :
-                                                                           (angles[(support_layer_id - 1) % angles.size()] + M_PI_2);
+                filler->angle           = support_params.raft_interface_angle(support_layer.interface_id());
                 filler->spacing = support_params.support_material_interface_flow.spacing();
                 filler->link_max_length = coord_t(scale_(filler->spacing * link_max_length_factor / support_params.interface_density));
                 fill_expolygons_generate_paths(
