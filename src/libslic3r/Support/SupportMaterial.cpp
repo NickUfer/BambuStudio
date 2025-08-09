@@ -477,7 +477,13 @@ void PrintObjectSupportMaterial::generate(PrintObject &object)
     // Propagate top / bottom contact layers to generate interface layers 
     // and base interface layers (for soluble interface / non souble base only)
 	SupportGeneratorLayersPtr empty_layers;
-    auto [interface_layers, base_interface_layers] = generate_interface_layers(*m_object_config, m_support_params, bottom_contacts, top_contacts, empty_layers, empty_layers, intermediate_layers, layer_storage);
+    SupportGeneratorLayersPtr interface_layers;
+    SupportGeneratorLayersPtr base_interface_layers;
+
+    interface_layers.assign(intermediate_layers.size(), nullptr);
+    base_interface_layers.assign(intermediate_layers.size(), nullptr);
+
+    //auto [interface_layers, base_interface_layers] = generate_interface_layers(*m_object_config, m_support_params, bottom_contacts, top_contacts, empty_layers, empty_layers, intermediate_layers, layer_storage);
 
     BOOST_LOG_TRIVIAL(info) << "Support generator - Creating raft";
 
