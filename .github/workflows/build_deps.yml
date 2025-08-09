@@ -66,7 +66,7 @@ jobs:
             mkdir ${{ github.workspace }}\deps\build
             mkdir ${{ github.workspace }}\deps\build\BambuStudio_dep
             cd "${{ github.workspace }}\deps\build"
-            cmake ../ -G "Visual Studio 17 2022" -A x64 -DDESTDIR="./BambuStudio_dep" -DCMAKE_BUILD_TYPE=Release -DDEP_DEBUG=OFF
+            cmake ../ -G "Visual Studio 17 2022" -A x64 -DDESTDIR="./BambuStudio_dep" -DCMAKE_BUILD_TYPE=Debug -DDEP_DEBUG=OFF
             msbuild /m ALL_BUILD.vcxproj
 
       - name: pack deps on Windows
